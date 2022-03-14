@@ -32,10 +32,15 @@ userPoints.hears(/^\/del_\d{1,}$/, async (ctx)=>{
         return 
     }
     let pointId = ctx.message.text.match(/^\/del_(\d{1,})$/)
-    let point = await db.query("SELECT `comment` FROM `user_objects` WHERE `id` = ?", [pointId['1']])
-    await db.query("DELETE FROM `user_objects` WHERE `id` = ?", [pointId[1]])
-    ctx.reply("Адрес \""+point[0]['comment']+"\" удалён")
-    ctx.scene.reenter()
+    let point = await db.query("SELECT `comment` FROM `user_objects` WHERE `id` = ? AND `chat_id` = ?", [pointId[1], ctx.message.chat.id])
+    if(point.length > 0){
+        await db.query("DELETE FROM `user_objects` WHERE `id` = ? AND `chat_id` = ?", [pointId[1], ctx.message.chat.id])
+        ctx.reply("Адрес \""+point[0]['comment']+"\" удалён")
+        ctx.scene.reenter()
+    }else{
+        ctx.reply("Произошла ошибка. Попробуй ещё раз")
+        ctx.scene.reenter()
+    }    
 })
 
 userPoints.hears(/^Назад$/, async (ctx)=>{
