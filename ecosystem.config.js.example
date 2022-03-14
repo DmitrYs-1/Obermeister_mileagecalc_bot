@@ -1,0 +1,26 @@
+module.exports = {
+    apps : [{
+        name   : "Obermeister_mileagecalc_bot",
+        script : "./index.js",
+        env_production: {
+            NODE_ENV: "production",
+            TG_TOKEN:"prod-token",
+            DB_HOST:"prod-server",
+            DB_USER:"prod-user",
+            DB_PASS:"prod-pass",
+            DB_NAME:"prod-dbname",
+            GOOGLE_KEY:"prod-api-key",
+            BOT_PASSWD:"prod-pass"
+        },
+        env_development: {
+            NODE_ENV: "development",
+            TG_TOKEN:"dev-token",
+            DB_HOST:"dev-server",
+            DB_USER:"dev-user",
+            DB_PASS:"dev-pass",
+            DB_NAME:"dev-dbname",
+            GOOGLE_KEY:"dev-api-key",
+            BOT_PASSWD:"dev-pass"
+        }
+    }]
+}

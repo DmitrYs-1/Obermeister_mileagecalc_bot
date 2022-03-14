@@ -1,0 +1,19 @@
+{
+  "name": "obermeister_mileagecalc_bot",
+  "version": "1.0.0",
+  "description": "Telegram bot from Obermeister by DmitrYs",
+  "main": "index.js",
+  "scripts": {
+    "test": "nodemon index.js"
+  },
+  "author": "DmitrYs",
+  "license": "ISC",
+  "dependencies": {
+    "mysql2": "^2.3.3",
+    "telegraf": "^4.7.0"
+  },
+  "devDependencies": {
+    "dotenv": "^16.0.0",
+    "nodemon": "^2.0.15"
+  }
+}
