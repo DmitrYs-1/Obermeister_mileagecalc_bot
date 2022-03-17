@@ -9,6 +9,16 @@ addUserPoint.enter(async (ctx)=>{
     await ctx.replyWithHTML("Для добавления нового адреса отправь геопозицию нужного места", keyboard)
 })
 
+addUserPoint.start(async (ctx)=>{
+    if(!await checkReg(ctx.message.chat.id)){
+        ctx.scene.enter('passw')
+        return
+    }else{        
+        ctx.reply(config.msgTexts.botReady, config.msgBtns.myPoints) 
+        ctx.scene.leave()
+    }
+})
+
 addUserPoint.on('location', async (ctx)=>{
     ctx.session.coords = ctx.message.location.latitude+','+ctx.message.location.longitude
     ctx.scene.enter('addUserPointStep2')

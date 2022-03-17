@@ -9,6 +9,16 @@ addUserPointStep2.enter(async (ctx)=>{
     await ctx.replyWithHTML("Напиши комментарий к адресу. Его будешь видеть только ты", keyboard)
 })
 
+addUserPointStep2.start(async (ctx)=>{
+    if(!await checkReg(ctx.message.chat.id)){
+        ctx.scene.enter('passw')
+        return
+    }else{        
+        ctx.reply(config.msgTexts.botReady, config.msgBtns.myPoints) 
+        ctx.scene.leave()
+    }
+})
+
 addUserPointStep2.on('text', async (ctx)=>{
     let points = await db.query("SELECT COUNT(id) FROM `user_objects` WHERE `chat_id` = ?", [ctx.message.chat.id])
     //console.log(points)
@@ -30,5 +40,7 @@ addUserPointStep2.hears(/^Назад$/, async (ctx)=>{
 addUserPointStep2.on('message', async (ctx)=>{
     ctx.scene.reenter()
 })
+
+
 
 module.exports = addUserPointStep2

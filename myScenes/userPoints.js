@@ -6,7 +6,8 @@ const {checkReg, checkObject} = require('../functions')
 const userPoints = new Scenes.BaseScene('userPoints')
 userPoints.enter(async (ctx)=>{
     let points = await db.query("SELECT * FROM `user_objects` WHERE `chat_id` = ?", [ctx.message.chat.id])
-    let text = "<b>Ваши адреса:</b>\r\n"
+    let uregion = await db.query("SELECT `region` FROM `users` WHERE `chat_id` = ?", [ctx.message.chat.id])
+    let text = `<b>Ваш регион: </b> <i>${uregion[0]['region']}</i>\r\n<b>Ваши адреса:</b>\r\n`
     if(points.length == 0){
         text += "Нет сохранённых адресов"
     }else{
@@ -14,8 +15,18 @@ userPoints.enter(async (ctx)=>{
             text += p['name']+" - "+p['comment']+" /del_"+p['id']+"\r\n"
         }
     }
-    let keyboard = Markup.keyboard([['Добавить адрес'],['Назад']]).resize()
+    let keyboard = Markup.keyboard([['Добавить адрес'],['Изменить регион'],['Назад']]).resize()
     await ctx.replyWithHTML(text, keyboard)
+})
+
+userPoints.start(async (ctx)=>{
+    if(!await checkReg(ctx.message.chat.id)){
+        ctx.scene.enter('passw')
+        return
+    }else{        
+        ctx.reply(config.msgTexts.botReady, config.msgBtns.myPoints) 
+        ctx.scene.leave()
+    }
 })
 
 userPoints.hears(/^Добавить адрес$/, async (ctx)=>{
@@ -24,6 +35,14 @@ userPoints.hears(/^Добавить адрес$/, async (ctx)=>{
         return 
     }
     ctx.scene.enter('addUserPoint')
+})
+
+userPoints.hears(/^Изменить регион$/, async (ctx)=>{
+    if(!await checkReg(ctx.message.chat.id)){
+        ctx.scene.enter('passw')
+        return 
+    }
+    ctx.scene.enter('passw2')
 })
 
 userPoints.hears(/^\/del_\d{1,}$/, async (ctx)=>{

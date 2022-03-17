@@ -8,7 +8,7 @@ const myScens = require('./myScenes')
 
 const bot = new Telegraf(config.system.tgToken)
 
-const stage = new Scenes.Stage([myScens.passw, myScens.userPoints, myScens.addUserPoint, myScens.addUserPointStep2])
+const stage = new Scenes.Stage([myScens.passw, myScens.userPoints, myScens.addUserPoint, myScens.addUserPointStep2, myScens.passw2, myScens.adm])
 
 bot.use(Telegraf.log())
 bot.use(session())
@@ -20,6 +20,7 @@ bot.start(async (ctx)=>{
         return
     }else{        
         ctx.reply(config.msgTexts.botReady, config.msgBtns.myPoints) 
+        ctx.scene.leave()
     }
 })
 
@@ -31,8 +32,17 @@ bot.help(async (ctx)=>{
     ctx.reply(config.system.helpText, {parse_mode:"HTML", disable_web_page_preview:true}) 
 })
 
+bot.command('adm', async (ctx)=>{
+    let aid = config.system.adminsid.split(',')
+    for(adm of aid){
+        if( ctx.message.chat.id == adm){
+            ctx.scene.enter('adm')
+        }
+    }
+})
+
 //Расчёт пробега
-bot.hears(/^(((\d{2,})|my\d{1,})(\,|)){2,}$/, async (ctx)=>{
+bot.hears(/^(((\d{1,})|my\d{1,})(\,|)){2,}$/i, async (ctx)=>{
     if(!await checkReg(ctx.message.chat.id)){
         ctx.scene.enter('passw')
         return 
@@ -41,18 +51,23 @@ bot.hears(/^(((\d{2,})|my\d{1,})(\,|)){2,}$/, async (ctx)=>{
 
     objects = ctx.message.text.split(',')
     
-    objects = objects.map(item => {        
-        if(item.indexOf('my') < 0){
+    objects = objects.map(item => {  
+        if(item.toLowerCase().indexOf('my') < 0){
             return {'id': item, 'type': 'shop'}
         }else{
             return {'id': item, 'type': 'my'}
         }
     });
 
+    var user = []
+    var ur = await db.query("SELECT `region` FROM `users` WHERE `chat_id` = ?", [ctx.message.chat.id])
+    user['region'] = ur[0]['region']
+    user['id'] = ctx.message.chat.id
+    //console.log(user)
     var result = []
     var error = []
     for(obj of objects){
-        coords = await checkObject(obj, ctx.message.chat.id)
+        coords = await checkObject(obj, user)
         if(coords){            
             result.push({'id':obj['id'], 'type':obj['type'], 'coords': coords})
         }else{
@@ -94,7 +109,7 @@ bot.hears(/^(((\d{2,})|my\d{1,})(\,|)){2,}$/, async (ctx)=>{
     ctx.reply(text, {parse_mode:"HTML"})
 
 
-    console.log(result)
+    //console.log(result)
 
 }) 
 

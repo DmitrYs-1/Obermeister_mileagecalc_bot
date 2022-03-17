@@ -12,6 +12,7 @@ const config = {
         botPassword: process.env.BOT_PASSWD,
         googleApiKey: process.env.GOOGLE_KEY,
         tgToken: process.env.TG_TOKEN,
+        adminsid: process.env.ADMINS,
         helpText: `
 <b><u>Калькулятор пробега v2.0 Автор <a href="tg://user?id=301046456">@МСИ Семёнов Дмитрий</a></u></b>\r\n 
 \r\n
@@ -29,7 +30,7 @@ const config = {
 Автор бота <a href="tg://user?id=301046456">МСИ Семёнов Дмитрий</a>
 Если вы нашли баг, у вас есть вопросы или пожелания по работе бота пишите автору
 
-Автору на пиво: <a href='https://www.tinkoff.ru/cf/15CsNYOImOO'>>>ТЫК<<</a>
+Автору на пиво: <a href='https://www.tinkoff.ru/cf/15CsNYOImOO'>ТЫК</a>
 `        
     },
     msgTexts:{

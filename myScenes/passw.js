@@ -9,12 +9,17 @@ passw.enter(async (ctx)=>{
 
 passw.on('text', async (ctx)=>{
     if(ctx.message.text == config.system.botPassword){
-        db.query("INSERT INTO `users` (`chat_id`, `user_name`) VALUES (?, ?)", [ctx.message.chat.id, ctx.message.chat.username])
+        let name = ''
+        if(ctx.message.chat.username){
+            name = ctx.message.chat.username
+        }else if(ctx.message.chat.first_name){
+            name = ctx.message.chat.first_name
+        }else{
+            name = 'noname'
+        }
+        db.query("INSERT INTO `users` (`chat_id`, `user_name`, `region`) VALUES (?, ?, '')", [ctx.message.chat.id, name])
 
-        let keyboard = Markup.keyboard(['Мои адреса']).resize()
-
-        ctx.reply("Бот готов к работе! Для справки команда /help", keyboard) 
-        ctx.scene.leave()
+        ctx.scene.enter('passw2')
     }else{
         ctx.scene.reenter()
     }
